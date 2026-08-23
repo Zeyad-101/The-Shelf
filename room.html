@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Shelf — Room</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- Error banner -->
+<div id="error-banner"></div>
+
+<!-- ═══ WALL ════════════════════════════════════════════════════════════════ -->
+<div class="wall" id="wall">
+  <div class="wall-grain"></div>
+
+  <!-- Lamp -->
+  <div class="lamp-wrap">
+    <div class="lamp-cord"></div>
+    <div class="lamp-shade"></div>
+  </div>
+  <div class="lamp-glow"></div>
+
+  <!-- ─── UI Controls ─────────────────────────────────────────────────────── -->
+  <div class="ui-controls">
+    <!-- Shelf tabs (left) -->
+    <div id="shelf-tabs">
+      <!-- Rendered by room.js -->
+    </div>
+
+    <!-- Right cluster -->
+    <div class="right-controls">
+      <button id="share-btn">Share</button>
+
+      <!-- Avatar -->
+      <div class="avatar-wrap">
+        <button id="avatar-btn" title="Account">Z</button>
+        <div id="avatar-menu">
+          <span id="user-email"></span>
+          <button id="sign-out-btn">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share link (shown when shelf is public) -->
+  <div id="share-link-wrap">
+    <a id="share-link-text" href="#" target="_blank"></a>
+    <button id="copy-link-btn">Copy</button>
+  </div>
+
+  <!-- ─── Shelf Area ───────────────────────────────────────────────────────── -->
+  <div id="shelf-area">
+
+    <!-- Items float here, flush on top of plank (Bug #1 prevention) -->
+    <div id="items-layer-wrap">
+      <div id="items-layer-inner">
+        <!-- Items rendered by room.js via buildItemEl() -->
+      </div>
+    </div>
+
+    <!-- Shelf plank -->
+    <div class="shelf-plank" id="shelf-plank">
+      <!-- Wood grain direction lines -->
+      <div class="shelf-grain-lines">
+        <svg viewBox="0 0 1000 44" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,14 Q200,10 400,16 T800,12 T1000,15" stroke="#F5D49A" stroke-width="1" fill="none"/>
+          <path d="M0,24 Q250,20 500,26 T1000,22" stroke="#F5D49A" stroke-width="0.8" fill="none"/>
+          <path d="M0,34 Q150,30 350,36 T700,30 T1000,34" stroke="#C49050" stroke-width="0.6" fill="none"/>
+        </svg>
+      </div>
+
+      <!-- Shelf name (engraved look) -->
+      <div class="shelf-name-wrap">
+        <span class="shelf-name-engraved" id="shelf-name-display" title="Click to rename">FAVORITES</span>
+        <input class="shelf-name-input" id="shelf-name-input" type="text" maxlength="20" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+
+    <!-- Front edge -->
+    <div class="shelf-edge"></div>
+  </div>
+
+  <!-- "+ Add to shelf" floating button -->
+  <button id="add-item-btn">+ Add to shelf</button>
+
+</div><!-- end .wall -->
+
+<!-- ═══ ADD ITEM MODAL ══════════════════════════════════════════════════════ -->
+<div id="add-item-modal" role="dialog" aria-modal="true" aria-label="Add item to shelf">
+  <div class="modal-card" id="modal-card">
+    <button id="modal-close" aria-label="Close">&times;</button>
+
+    <!-- Step 1: Type selector -->
+    <div id="step-1">
+      <h2>What are you adding?</h2>
+      <div class="type-selector">
+        <button class="type-select-btn" data-type="book">
+          <span>📖</span>Book
+        </button>
+        <button class="type-select-btn" data-type="movie">
+          <span>🎬</span>Movie
+        </button>
+        <button class="type-select-btn" data-type="music">
+          <span>🎵</span>Music
+        </button>
+        <button class="type-select-btn" data-type="decorative">
+          <span>🏺</span>Object
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: Item form -->
+    <div id="step-2" style="display:none">
+      <button class="back-btn" id="step-back-btn">← Back</button>
+      <h2>Add <span id="step2-type-label">Item</span></h2>
+
+      <form id="add-item-form" novalidate>
+        <input type="hidden" id="selected-type">
+
+        <div class="form-field" id="field-name">
+          <label for="item-name">Title <span style="color:#E07070">*</span></label>
+          <input type="text" id="item-name" placeholder="e.g. Dune" autocomplete="off" required>
+        </div>
+
+        <div class="form-field" id="field-deco-presets" style="display:none; text-align:center;">
+          <label style="margin-bottom: 12px; display:block;">Select an object</label>
+          <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <label class="deco-option">
+              <input type="radio" name="deco-preset" value="Plant" checked style="display:none;">
+              <div class="deco-card">🪴<br>Plant</div>
+            </label>
+            <label class="deco-option">
+              <input type="radio" name="deco-preset" value="Framed Photo" style="display:none;">
+              <div class="deco-card">🖼️<br>Photo</div>
+            </label>
+            <label class="deco-option">
+              <input type="radio" name="deco-preset" value="Duck" style="display:none;">
+              <div class="deco-card">🦆<br>Duck</div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-field" id="field-cover">
+          <label for="item-cover">Cover image (optional)</label>
+          <input type="file" id="item-cover" accept="image/*">
+        </div>
+
+        <div class="form-field" id="field-rating">
+          <label for="item-rating">Rating /10 (optional)</label>
+          <input type="number" id="item-rating" min="0" max="10" step="0.1" placeholder="e.g. 8.5">
+          <div id="rating-error" style="color:#E07070; font-size:12px; margin-top:4px; display:none;"></div>
+        </div>
+
+        <div class="form-field" id="field-desc">
+          <label for="item-description">Notes / description (optional)</label>
+          <textarea id="item-description" placeholder="What made it special?"></textarea>
+        </div>
+
+        <div id="form-error"></div>
+
+        <button type="submit" id="submit-item-btn">Add to Shelf</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/room.js"></script>
+<script type="module">
+  // Step 2 back button (wired here so it's always active once DOM is ready)
+  document.getElementById('step-back-btn')?.addEventListener('click', () => {
+    document.getElementById('step-1').style.display = 'block';
+    document.getElementById('step-2').style.display = 'none';
+  });
+</script>
+</body>
+</html>

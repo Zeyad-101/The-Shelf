@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Shelf — Your personal display room</title>
+  <meta name="description" content="The Shelf — Your personal display room for books, movies, music, and decorative objects.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<script type="module">
+  import { supabase } from './js/supabaseClient.js';
+  (async () => {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      window.location.href = '/room.html';
+    } else {
+      window.location.href = '/login.html';
+    }
+  })();
+</script>
+<div class="wall">
+  <div class="wall-grain"></div>
+  <p style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Inter',sans-serif;color:#8B6645;font-size:14px;">Loading…</p>
+</div>
+</body>
+</html>
