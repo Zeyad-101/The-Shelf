@@ -54,9 +54,14 @@ export function attachDrag(el, item, shelfContainer) {
     }
     if (!isDragging) return;
 
+    // Convert screen pixel movement (dx) into logical container coordinates using bounding scale
+    const rect       = shelfContainer.getBoundingClientRect();
+    const scale      = (rect.width / shelfContainer.offsetWidth) || 1;
+    const scaledDx   = dx / scale;
+
     const containerW = shelfContainer.offsetWidth;
     const itemW      = el.offsetWidth;
-    const newLeft    = Math.max(0, Math.min(containerW - itemW, startLeft + dx));
+    const newLeft    = Math.max(0, Math.min(containerW - itemW, startLeft + scaledDx));
     el.style.left    = newLeft + 'px';
   });
 

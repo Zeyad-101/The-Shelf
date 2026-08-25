@@ -525,3 +525,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Non-fatal — add item won't work but drag/inspect/share still will
   }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const lamp = document.querySelector('.lamp-wrap');
+  if (lamp) lamp.addEventListener('click', () => document.body.classList.toggle('lamp-off'));
+});
+

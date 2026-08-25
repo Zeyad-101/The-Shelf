@@ -4,8 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Shelf — Your personal display room</title>
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#754A2B">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="The Shelf">
+
   <meta name="description" content="The Shelf — Your personal display room for books, movies, music, and decorative objects.">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
@@ -13,22 +23,18 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-
 <div class="wall" id="wall">
   <div class="wall-grain"></div>
-
   <!-- Lamp -->
   <div class="lamp-wrap">
     <div class="lamp-cord"></div>
     <div class="lamp-shade"></div>
   </div>
   <div class="lamp-glow"></div>
-
   <!-- Login Card -->
   <div class="login-card">
     <div class="login-title">The Shelf</div>
     <div class="login-subtitle">Your personal display room</div>
-
     <button class="google-btn" id="google-sign-in">
       <!-- Google G logo SVG -->
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -39,21 +45,17 @@
       </svg>
       Continue with Google
     </button>
-
     <div id="login-error"></div>
   </div>
 </div>
-
 <script type="module">
   import { supabase } from './js/supabaseClient.js';
   import { signInWithGoogle } from './js/auth.js';
-
   // Redirect if already signed in
   (async () => {
     const { data } = await supabase.auth.getSession();
     if (data.session) { window.location.href = '/room.html'; }
   })();
-
   const btn = document.getElementById('google-sign-in');
   btn.addEventListener('click', async () => {
     const errorEl = document.getElementById('login-error');
@@ -69,5 +71,14 @@
     }
   });
 </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
+
 </html>

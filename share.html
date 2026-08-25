@@ -4,7 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Shelf — Shared View</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#754A2B">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="The Shelf">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
@@ -12,34 +22,27 @@
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-
 <!-- Error banner -->
 <div id="error-banner"></div>
-
 <!-- Read-only badge -->
 <div class="share-badge">Viewing</div>
-
 <!-- ═══ WALL ════════════════════════════════════════════════════════════════ -->
 <div class="wall" id="shelf-area-outer">
   <div class="wall-grain"></div>
-
   <!-- Lamp -->
   <div class="lamp-wrap">
     <div class="lamp-cord"></div>
     <div class="lamp-shade"></div>
   </div>
   <div class="lamp-glow"></div>
-
   <!-- ─── Shelf Area ───────────────────────────────────────────────────────── -->
   <div id="shelf-area">
-
     <!-- Items layer — no drag in share mode -->
     <div id="items-layer-wrap">
       <div id="items-layer-inner" style="pointer-events:none;">
         <!-- Items rendered by share.js -->
       </div>
     </div>
-
     <!-- Shelf plank -->
     <div class="shelf-plank">
       <!-- Grain lines -->
@@ -50,19 +53,24 @@
           <path d="M0,34 Q150,30 350,36 T700,30 T1000,34" stroke="#C49050" stroke-width="0.6" fill="none"/>
         </svg>
       </div>
-
       <!-- Shelf name (read-only) -->
       <div class="shelf-name-wrap">
         <span class="shelf-name-engraved" id="shelf-name-display" style="cursor:default;">SHELF</span>
       </div>
     </div>
-
     <!-- Front edge -->
     <div class="shelf-edge"></div>
   </div>
-
 </div><!-- end .wall -->
-
 <script type="module" src="/js/share.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
+
 </html>

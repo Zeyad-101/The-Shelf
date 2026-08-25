@@ -76,3 +76,10 @@ function showError(msg) {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const lamp = document.querySelector('.lamp-wrap');
+  if (lamp) lamp.addEventListener('click', () => document.body.classList.toggle('lamp-off'));
+});
+

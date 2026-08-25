@@ -1,0 +1,15 @@
+{
+  "name": "The Shelf — Personal Digital Display Room",
+  "short_name": "The Shelf",
+  "description": "Your personal digital display room for books, movies, music, and decorative objects.",
+  "start_url": "/room.html",
+  "display": "standalone",
+  "background_color": "#F0E6D8",
+  "theme_color": "#754A2B",
+  "orientation": "any",
+  "icons": [
+    { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/maskable-icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

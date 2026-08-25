@@ -4,7 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Shelf — Room</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#754A2B">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="The Shelf">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
@@ -12,32 +22,26 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-
 <!-- Error banner -->
 <div id="error-banner"></div>
-
 <!-- ═══ WALL ════════════════════════════════════════════════════════════════ -->
 <div class="wall" id="wall">
   <div class="wall-grain"></div>
-
   <!-- Lamp -->
   <div class="lamp-wrap">
     <div class="lamp-cord"></div>
     <div class="lamp-shade"></div>
   </div>
   <div class="lamp-glow"></div>
-
   <!-- ─── UI Controls ─────────────────────────────────────────────────────── -->
   <div class="ui-controls">
     <!-- Shelf tabs (left) -->
     <div id="shelf-tabs">
       <!-- Rendered by room.js -->
     </div>
-
     <!-- Right cluster -->
     <div class="right-controls">
       <button id="share-btn">Share</button>
-
       <!-- Avatar -->
       <div class="avatar-wrap">
         <button id="avatar-btn" title="Account">Z</button>
@@ -48,23 +52,19 @@
       </div>
     </div>
   </div>
-
   <!-- Share link (shown when shelf is public) -->
   <div id="share-link-wrap">
     <a id="share-link-text" href="#" target="_blank"></a>
     <button id="copy-link-btn">Copy</button>
   </div>
-
   <!-- ─── Shelf Area ───────────────────────────────────────────────────────── -->
   <div id="shelf-area">
-
     <!-- Items float here, flush on top of plank (Bug #1 prevention) -->
     <div id="items-layer-wrap">
       <div id="items-layer-inner">
         <!-- Items rendered by room.js via buildItemEl() -->
       </div>
     </div>
-
     <!-- Shelf plank -->
     <div class="shelf-plank" id="shelf-plank">
       <!-- Wood grain direction lines -->
@@ -75,28 +75,22 @@
           <path d="M0,34 Q150,30 350,36 T700,30 T1000,34" stroke="#C49050" stroke-width="0.6" fill="none"/>
         </svg>
       </div>
-
       <!-- Shelf name (engraved look) -->
       <div class="shelf-name-wrap">
         <span class="shelf-name-engraved" id="shelf-name-display" title="Click to rename">FAVORITES</span>
         <input class="shelf-name-input" id="shelf-name-input" type="text" maxlength="20" autocomplete="off" spellcheck="false">
       </div>
     </div>
-
     <!-- Front edge -->
     <div class="shelf-edge"></div>
   </div>
-
   <!-- "+ Add to shelf" floating button -->
   <button id="add-item-btn">+ Add to shelf</button>
-
 </div><!-- end .wall -->
-
 <!-- ═══ ADD ITEM MODAL ══════════════════════════════════════════════════════ -->
 <div id="add-item-modal" role="dialog" aria-modal="true" aria-label="Add item to shelf">
   <div class="modal-card" id="modal-card">
     <button id="modal-close" aria-label="Close">&times;</button>
-
     <!-- Step 1: Type selector -->
     <div id="step-1">
       <h2>What are you adding?</h2>
@@ -115,20 +109,16 @@
         </button>
       </div>
     </div>
-
     <!-- Step 2: Item form -->
     <div id="step-2" style="display:none">
       <button class="back-btn" id="step-back-btn">← Back</button>
       <h2>Add <span id="step2-type-label">Item</span></h2>
-
       <form id="add-item-form" novalidate>
         <input type="hidden" id="selected-type">
-
         <div class="form-field" id="field-name">
           <label for="item-name">Title <span style="color:#E07070">*</span></label>
           <input type="text" id="item-name" placeholder="e.g. Dune" autocomplete="off" required>
         </div>
-
         <div class="form-field" id="field-deco-presets" style="display:none; text-align:center;">
           <label style="margin-bottom: 12px; display:block;">Select an object</label>
           <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
@@ -146,31 +136,25 @@
             </label>
           </div>
         </div>
-
         <div class="form-field" id="field-cover">
           <label for="item-cover">Cover image (optional)</label>
           <input type="file" id="item-cover" accept="image/*">
         </div>
-
         <div class="form-field" id="field-rating">
           <label for="item-rating">Rating /10 (optional)</label>
           <input type="number" id="item-rating" min="0" max="10" step="0.1" placeholder="e.g. 8.5">
           <div id="rating-error" style="color:#E07070; font-size:12px; margin-top:4px; display:none;"></div>
         </div>
-
         <div class="form-field" id="field-desc">
           <label for="item-description">Notes / description (optional)</label>
           <textarea id="item-description" placeholder="What made it special?"></textarea>
         </div>
-
         <div id="form-error"></div>
-
         <button type="submit" id="submit-item-btn">Add to Shelf</button>
       </form>
     </div>
   </div>
 </div>
-
 <script type="module" src="js/room.js"></script>
 <script type="module">
   // Step 2 back button (wired here so it's always active once DOM is ready)
@@ -179,5 +163,14 @@
     document.getElementById('step-2').style.display = 'none';
   });
 </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
+
 </html>
