@@ -163,10 +163,19 @@ function selectType(type) {
     }
   }
 
-  // Attach change listeners once
+  // Attach change and click listeners once
   if (isDeco && !window._decoListenersAdded) {
     document.querySelectorAll('input[name="deco-category"]').forEach(r => {
       r.addEventListener('change', syncDecoUI);
+    });
+    document.querySelectorAll('.deco-cat-option').forEach(label => {
+      label.addEventListener('click', () => {
+        const radio = label.querySelector('input[name="deco-category"]');
+        if (radio) {
+          radio.checked = true;
+          syncDecoUI();
+        }
+      });
     });
     document.querySelectorAll('input[name="deco-preset"]').forEach(r => {
       r.addEventListener('change', () => {
@@ -177,6 +186,22 @@ function selectType(type) {
           descField.placeholder = defaultDesc
             ? 'Edit description or leave as-is'
             : 'What made it special?';
+        }
+      });
+    });
+    document.querySelectorAll('.deco-option').forEach(label => {
+      label.addEventListener('click', () => {
+        const radio = label.querySelector('input[name="deco-preset"]');
+        if (radio) {
+          radio.checked = true;
+          const descField = document.getElementById('item-description');
+          if (descField) {
+            const defaultDesc = getDecoDescription(radio.value);
+            descField.value = defaultDesc;
+            descField.placeholder = defaultDesc
+              ? 'Edit description or leave as-is'
+              : 'What made it special?';
+          }
         }
       });
     });

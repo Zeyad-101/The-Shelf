@@ -398,10 +398,19 @@ function wireItemInteractions(el, item) {
   }
 
   el.setAttribute('title', 'Press to quack! 🦆 (Double-click to view/delete)');
-  el.addEventListener('click', () => {
-    if (el.dataset.dragging === 'true') return;
+
+  let lastQuackTime = 0;
+  function triggerQuack() {
+    const now = Date.now();
+    if (now - lastQuackTime < 80) return;
+    lastQuackTime = now;
     playDuckQuack();
     triggerDuckWobble(el);
+  }
+
+  el.addEventListener('click', () => {
+    if (el.dataset.dragging === 'true') return;
+    triggerQuack();
   });
   el.addEventListener('dblclick', (e) => {
     e.stopPropagation();
@@ -409,13 +418,24 @@ function wireItemInteractions(el, item) {
   });
 
   let pressTimer = null;
+  let touchStartTime = 0;
   el.addEventListener('pointerdown', (e) => {
-    if (e.pointerType !== 'touch') return;
-    pressTimer = setTimeout(() => {
-      if (el.dataset.dragging !== 'true') inspectItem(item, el);
-    }, 600);
+    if (e.pointerType === 'touch') {
+      touchStartTime = Date.now();
+      pressTimer = setTimeout(() => {
+        if (el.dataset.dragging !== 'true') inspectItem(item, el);
+      }, 600);
+    }
   });
-  el.addEventListener('pointerup',     () => clearTimeout(pressTimer));
+  el.addEventListener('pointerup', (e) => {
+    clearTimeout(pressTimer);
+    if (e.pointerType === 'touch' && el.dataset.dragging !== 'true') {
+      const elapsed = Date.now() - touchStartTime;
+      if (elapsed < 400) {
+        triggerQuack();
+      }
+    }
+  });
   el.addEventListener('pointercancel', () => clearTimeout(pressTimer));
 }
 

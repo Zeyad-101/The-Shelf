@@ -22,7 +22,6 @@ export function attachDrag(el, item, shelfContainer) {
   el.addEventListener('pointerdown', (e) => {
     if (e.button !== 0 && e.pointerType === 'mouse') return;
 
-    el.setPointerCapture(e.pointerId);
     startX     = e.clientX;
     startLeft  = parseFloat(el.style.left) || 0;
     isDragging = false;
@@ -44,6 +43,7 @@ export function attachDrag(el, item, shelfContainer) {
     if (!isDragging && Math.abs(dx) > 4) {
       isDragging = true;
       el.dataset.dragging = 'true';
+      try { el.setPointerCapture(e.pointerId); } catch (_) {}
 
       // ── Drag lift feedback ──
       // Override the CSS transition momentarily so the lift feels instant

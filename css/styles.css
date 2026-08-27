@@ -539,6 +539,14 @@ body.lamp-off .shelf-plank::after { opacity: 0; }
 }
 
 /* Decorative Presets & Category */
+.deco-radio-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+  margin: 0;
+}
 .deco-cat-option input:checked + .deco-card,
 .deco-option input:checked + .deco-card {
   border-color: #D9AD80;
