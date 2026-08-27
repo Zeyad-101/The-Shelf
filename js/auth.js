@@ -1,4 +1,4 @@
-﻿import { supabase } from './supabaseClient.js';
+import { supabase } from './supabaseClient.js';
 
 /** Returns the current session or null */
 export async function getSession() {
@@ -8,6 +8,9 @@ export async function getSession() {
 
 /** Redirect to /login.html if no session */
 export async function requireAuth() {
+  if (typeof window !== 'undefined' && (window.location.search.includes('demo=1') || localStorage.getItem('shelf_dev_mode') === 'true')) {
+    return { user: { id: 'demo-user-123', email: 'demo@theshelf.app' } };
+  }
   const session = await getSession();
   if (!session) {
     window.location.href = '/login.html';

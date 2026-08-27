@@ -39,14 +39,18 @@ html, body {
 .lamp-wrap {
   position: absolute; top: 0; left: 50%; transform: translateX(-50%);
   display: flex; flex-direction: column; align-items: center; z-index: 6;
+  cursor: pointer; transition: transform 0.1s cubic-bezier(0.22,1,0.36,1);
 }
-/* Bulb: intense bright point at base of shade */
-.lamp-wrap { cursor: pointer; transition: transform 0.1s cubic-bezier(0.22,1,0.36,1); }
 .lamp-wrap:active { transform: translateX(-50%) scale(0.96); }
-body.lamp-off .lamp-glow { opacity: 0;  }
-body.lamp-off .lamp-wrap::after { opacity: 0;  }
-body.lamp-off .lamp-shade::after { opacity: 0;  }
 
+/* Extinguish lighting when lamp is clicked off */
+body.lamp-off .lamp-glow { opacity: 0; }
+body.lamp-off .lamp-wrap::after { opacity: 0; }
+body.lamp-off .lamp-shade::after { opacity: 0; }
+body.lamp-off .shelf-spotlight { opacity: 0; }
+body.lamp-off .shelf-plank::after { opacity: 0; }
+
+/* Bulb: intense bright point at base of shade */
 .lamp-wrap::after {
   content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%);
   width: 28px; height: 16px;
@@ -66,27 +70,43 @@ body.lamp-off .lamp-shade::after { opacity: 0;  }
   background: linear-gradient(18deg, transparent 30%, rgba(255,230,150,0.18) 55%, transparent 70%);
   clip-path: inherit;
 }
-/* Lamp glow & light cone */
+
+/* ─── Lamp Light: Focused directly down to the shelf ─── */
 .lamp-glow {
   position: absolute; top: 130px; left: 50%; transform: translateX(-50%);
-  width: 75vw; height: 60vh;
-  /* Ambient soft radial glow */
-  background: radial-gradient(
-    ellipse 75% 55% at 50% 0%,
-    rgba(255,227,158,0.55) 0%,
-    rgba(255,215,100,0.2) 35%,
-    rgba(255,200,80,0.06) 60%,
-    transparent 80%
-  );
-  pointer-events: none; z-index: 5;
+  width: min(580px, 85vw);
+  bottom: calc(22% + 40px);
+  pointer-events: none; z-index: 4;
 }
-/* Directional Light Cone (trapezoid falling from lamp to shelf) */
+/* Directional Light Shaft pointing directly down to the shelf */
 .lamp-glow::before {
-  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; height: 100%;
-  background: linear-gradient(to bottom, rgba(255,230,150,0.4) 0%, rgba(255,220,130,0.08) 60%, transparent 100%);
-  clip-path: polygon(calc(50% - 35px) 0, calc(50% + 35px) 0, 95% 100%, 5% 100%);
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to bottom,
+    rgba(255,235,170,0.28) 0%,
+    rgba(255,225,140,0.10) 65%,
+    rgba(255,215,110,0.01) 100%
+  );
+  clip-path: polygon(calc(50% - 25px) 0, calc(50% + 25px) 0, 92% 100%, 8% 100%);
   pointer-events: none;
+}
+
+/* ─── Shelf Spotlight: warm pool of light directly on the shelf and items ───── */
+.shelf-spotlight {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(920px, 100%);
+  height: 260px;
+  background: radial-gradient(
+    ellipse 65% 85% at 50% 100%,
+    rgba(255, 238, 175, 0.40) 0%,
+    rgba(255, 220, 130, 0.18) 50%,
+    rgba(255, 200, 90, 0.03) 75%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 12;
 }
 
 /* ─── UI Controls ───────────────────────────────────────────────────────────── */
@@ -130,17 +150,13 @@ body.lamp-off .lamp-shade::after { opacity: 0;  }
   border-radius: 50%;
   font-size: 13px; line-height: 1;
   font-style: normal; font-weight: 400; letter-spacing: 0;
-  /* Subtle at rest — always clickable, not obtrusive */
   opacity: 0.45;
   transition: opacity 0.15s ease, background 0.12s ease, transform 0.1s ease;
-  /* Prevent text-transform:uppercase from affecting the × glyph */
   text-transform: none;
 }
-/* Emphasise × when hovering the whole tab */
 .shelf-tab:hover .tab-close        { opacity: 1; }
 .shelf-tab.active .tab-close       { opacity: 0.55; }
 .shelf-tab.active:hover .tab-close { opacity: 1; }
-/* Micro hover on the × itself */
 .tab-close:hover {
   background: rgba(180,80,60,0.2);
   transform: scale(1.2);
@@ -148,7 +164,6 @@ body.lamp-off .lamp-shade::after { opacity: 0;  }
 }
 /* Last-shelf guard: hide × entirely when only 1 shelf exists */
 .shelf-tab.tab-only-shelf .tab-close { display: none; }
-
 
 .right-controls { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
 
@@ -203,10 +218,6 @@ body.lamp-off .lamp-shade::after { opacity: 0;  }
   display: block;
   animation: menuFadeIn 0.18s cubic-bezier(0.22,1,0.36,1) both;
 }
-@keyframes menuFadeIn {
-  from { opacity: 0; transform: scale(0.92) translateY(-6px); }
-  to   { opacity: 1; transform: scale(1)    translateY(0);    }
-}
 #user-email {
   display: block; padding: 4px 16px 10px; font-size: 11px;
   color: rgba(245,240,232,0.55);
@@ -250,13 +261,6 @@ body.lamp-off .lamp-shade::after { opacity: 0;  }
   box-shadow: 0 8px 36px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3);
   overflow: visible; container-type: inline-size; container-name: shelf;
 }
-/*
-  Layer 1 — SVG fractal-noise wood grain.
-  baseFrequency: 0.035 horizontal (long grain runs) 0.55 vertical (fine cross grain)
-  numOctaves 5 = rich, detailed pattern.
-  mix-blend-mode: soft-light works on dark backgrounds (overlay washes out on darks).
-  opacity 0.5 on the SVG rect = clearly visible grain at normal size.
-*/
 .shelf-plank::before {
   content: ''; position: absolute; inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='44'%3E%3Cfilter id='wood'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.035 0.55' numOctaves='5' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='600' height='44' filter='url(%23wood)' opacity='0.5'/%3E%3C/svg%3E");
@@ -264,16 +268,20 @@ body.lamp-off .lamp-shade::after { opacity: 0;  }
   mix-blend-mode: soft-light;
   border-radius: inherit; pointer-events: none; z-index: 1;
 }
-/* Layer 2 — Varnish sheen streak along top edge */
+/* Layer 2 — Focused lamp light sheen across shelf surface */
 .shelf-plank::after {
   content: ''; position: absolute;
-  top: 0; left: 0; right: 0; height: 14px;
-  background: linear-gradient(to bottom,
-    rgba(255,225,165,0.42) 0%, rgba(255,210,130,0.15) 55%, transparent 100%
+  top: 0; left: 0; right: 0; height: 16px;
+  background: radial-gradient(
+    ellipse 460px 18px at 50% 0%,
+    rgba(255, 245, 195, 0.68) 0%,
+    rgba(255, 225, 145, 0.32) 50%,
+    rgba(255, 215, 130, 0.05) 80%,
+    transparent 100%
   );
   border-radius: 2px 2px 0 0; pointer-events: none; z-index: 2;
+  transition: opacity 0.3s ease;
 }
-/* Layer 3 — wavy grain direction lines (rendered in room.html SVG inline) */
 .shelf-grain-lines {
   position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; border-radius: inherit;
 }
@@ -292,12 +300,6 @@ body.lamp-off .lamp-shade::after { opacity: 0;  }
   font-size: clamp(10px, 1.1vw, 14px);
   letter-spacing: 6px; text-transform: uppercase;
   color: #382112; cursor: pointer; user-select: none;
-  /*
-    True engraved look:
-    +1px+1px light highlight (D9AD80 50%) = material catching light at raised edge
-    -1px-1px darker shadow = depth on opposite side
-    drop shadow for overall depth
-  */
   text-shadow:
     1px  1px  0   rgba(217,173,128,0.50),
     -1px -1px 0   rgba(0,0,0,0.28),
@@ -306,7 +308,6 @@ body.lamp-off .lamp-shade::after { opacity: 0;  }
 }
 .shelf-name-engraved:hover { opacity: 0.75; }
 .shelf-name-engraved.name-updated { animation: nameFade 0.4s ease both; }
-@keyframes nameFade { 0% { opacity: 0.25; } 100% { opacity: 1; } }
 
 .shelf-name-input {
   display: none;
@@ -334,29 +335,23 @@ body.lamp-off .lamp-shade::after { opacity: 0;  }
 #add-item-btn:hover  { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 24px rgba(66,41,23,0.6); }
 #add-item-btn:active { transform: translateY(0) scale(0.98);    box-shadow: 0 2px 8px  rgba(66,41,23,0.4); }
 
-/* ─── Modal ─────────────────────────────────────────────────────────────────── */
+/* ─── Modal (no backdrop-filter — it causes GPU stall on every open/close) ─── */
 #add-item-modal {
   display: none; position: fixed; inset: 0; z-index: 100;
-  background: rgba(30,16,6,0.72);
-  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  background: rgba(20,10,4,0.84);
   align-items: center; justify-content: center;
 }
 #add-item-modal.active {
   display: flex;
-  animation: backdropFadeIn 0.22s ease both;
+  animation: backdropFadeIn 0.18s ease both;
 }
-@keyframes backdropFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .modal-card {
   background: linear-gradient(160deg, #2C1A0E 0%, #1A0E06 100%);
   border-radius: 14px; padding: 32px; width: 100%; max-width: 440px;
   color: #F5F0E8; font-family: 'Inter', sans-serif;
   box-shadow: 0 24px 60px rgba(0,0,0,0.65); position: relative;
-  animation: modalScaleIn 0.22s cubic-bezier(0.22,1,0.36,1) both;
-}
-@keyframes modalScaleIn {
-  from { opacity: 0; transform: scale(0.92) translateY(14px); }
-  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+  animation: modalScaleIn 0.2s cubic-bezier(0.22,1,0.36,1) both;
 }
 .modal-card h2 { font-family: 'Fraunces', serif; font-size: 20px; margin: 0 0 20px; color: #F5F0E8; }
 
@@ -468,7 +463,6 @@ body.lamp-off .lamp-shade::after { opacity: 0;  }
 }
 
 /* ─── Item states ───────────────────────────────────────────────────────────── */
-/* Drag lift - class toggled by dragReposition.js */
 .shelf-item--dragging {
   z-index: 50 !important;
 }
@@ -513,7 +507,7 @@ body.lamp-off .lamp-shade::after { opacity: 0;  }
   #shelf-area   { left: 12px; right: 12px; bottom: 18%; }
   .ui-controls  { top: 14px; padding: 0 12px; flex-wrap: nowrap; gap: 8px; }
   #shelf-tabs   { max-width: calc(100vw - 130px); }
-  .lamp-glow    { width: 100vw; }
+  .lamp-glow { width: 92vw; bottom: calc(18% + 32px); }
   #add-item-btn { bottom: 20px; right: 16px; padding: 10px 18px; font-size: 13px; }
   /* Modal slides up from bottom on mobile */
   .modal-card {
@@ -539,24 +533,43 @@ body.lamp-off .lamp-shade::after { opacity: 0;  }
   .shelf-tab            { padding: 5px 10px; font-size: 11px; }
   .lamp-cord            { height: 55px; }
   .lamp-shade           { width: 60px; height: 38px; }
-  .lamp-glow            { top: 90px; }
+  .lamp-glow { top: 90px; bottom: calc(15% + 32px); }
   #add-item-btn         { bottom: 16px; right: 12px; padding: 9px 14px; font-size: 12px; }
   .login-title          { font-size: clamp(24px, 8vw, 36px); letter-spacing: 3px; }
 }
 
-/* Decorative Presets */
-.deco-option input:checked + .deco-card { border-color: #D9AD80; background: rgba(217,173,128,0.15); }
+/* Decorative Presets & Category */
+.deco-cat-option input:checked + .deco-card,
+.deco-option input:checked + .deco-card {
+  border-color: #D9AD80;
+  background: rgba(217,173,128,0.22);
+  box-shadow: 0 0 0 1px #D9AD80 inset;
+}
 .deco-card {
-  border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px 16px;
-  cursor: pointer; text-align: center; transition: all 0.2s ease;
-  color: #F5F0E8; font-size: 14px; line-height: 1.4;
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px 8px;
+  cursor: pointer; text-align: center;
+  /* Narrow transition (not `all`) — `all` also animates layout properties */
+  transition: border-color 0.2s ease, background 0.2s ease;
+  color: #F5F0E8; font-size: 12px; line-height: 1.35;
+  /* Keep the longer preset names (Monstera, Detective) on one line inside the
+     narrow grid columns instead of breaking mid-word. */
+  overflow-wrap: normal; word-break: keep-all; letter-spacing: 0;
 }
 .deco-card:hover { border-color: rgba(217,173,128,0.5); }
 
+/* ─── Transition helpers ─────────────────────────────────────────────────────── */
+.lamp-wrap::after, .lamp-shade::after, .lamp-glow, .shelf-spotlight, .shelf-plank::after {
+  transition: opacity 0.3s ease;
+}
 
-
-
-
-
-.lamp-wrap::after, .lamp-shade::after, .lamp-glow { transition: opacity 0.3s ease; }
-
+/* ─── Duck Quack & Squash Animation ────────────────────────────────────────── */
+@keyframes duckQuackWobble {
+  0%   { transform: rotate(var(--r, 0deg)) scale(1, 1); }
+  25%  { transform: rotate(calc(var(--r, 0deg) - 7deg)) scale(1.18, 0.82); }
+  50%  { transform: rotate(calc(var(--r, 0deg) + 6deg)) scale(0.92, 1.14); }
+  75%  { transform: rotate(calc(var(--r, 0deg) - 2deg)) scale(1.05, 0.96); }
+  100% { transform: rotate(var(--r, 0deg)) scale(1, 1); }
+}
+.duck-quacking {
+  animation: duckQuackWobble 0.42s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}

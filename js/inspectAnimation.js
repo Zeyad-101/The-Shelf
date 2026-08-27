@@ -12,7 +12,8 @@
  */
 
 import { supabase } from './supabaseClient.js';
-import { SVG_PLANT, getPhotoSvg, SVG_DUCK } from './shelfRender.js';
+import { getDecoSvg, getDecoDescription } from './shelfRender.js';
+import { playDuckQuack, triggerDuckWobble, isDuckItem } from './audio.js';
 
 let activeOverlay = null;
 let activeItem    = null;   // the shelf-item DOM element (hidden while card is open)
@@ -50,11 +51,9 @@ export function openInspect(item, itemEl, { showDelete = false, onDeleted = null
   const backdrop = document.createElement('div');
   backdrop.style.cssText = `
     position: fixed; inset: 0; z-index: 999;
-    background: rgba(34,20,10,0.65);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background: rgba(22,12,4,0.80);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.25s ease;
   `;
   backdrop.addEventListener('click', closeInspect);
 
@@ -179,13 +178,27 @@ function buildInspectCard(item, { showDelete, onDeleted }) {
     contentArea.style.alignItems = 'center';
     contentArea.style.padding = '20px 0';
     
-    let svgStr = getPhotoSvg(item.cover_url);
-    if (item.name === 'Plant') svgStr = SVG_PLANT;
-    else if (item.name === 'Duck') svgStr = SVG_DUCK;
-    
+    const svgStr = getDecoSvg(item);
+    const isDuck = isDuckItem(item);
+
+    // Two nested wrappers: the outer one owns the static 1.5× blow-up, the inner
+    // one is what the wobble animation drives. Animating a single element would
+    // overwrite `scale(1.5)` and make the duck shrink mid-quack.
     const svgWrap = document.createElement('div');
-    svgWrap.style.cssText = `margin-bottom: 24px; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.6)); transform: scale(1.5);`;
-    svgWrap.innerHTML = svgStr;
+    svgWrap.style.cssText = `margin-bottom: 24px; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.6)); transform: scale(1.5); overflow: visible; ${isDuck ? 'cursor: pointer;' : ''}`;
+    if (isDuck) svgWrap.title = 'Press me! 🦆';
+
+    const svgInner = document.createElement('div');
+    svgInner.style.cssText = `display: flex; overflow: visible;`;
+    svgInner.innerHTML = svgStr;
+    svgWrap.appendChild(svgInner);
+
+    if (isDuck) {
+      svgWrap.addEventListener('click', () => {
+        playDuckQuack();
+        triggerDuckWobble(svgInner);
+      });
+    }
     contentArea.appendChild(svgWrap);
 
     const title = document.createElement('h2');
@@ -195,6 +208,19 @@ function buildInspectCard(item, { showDelete, onDeleted }) {
       color: ${TITLE_COLOR}; margin: 0;
     `;
     contentArea.appendChild(title);
+
+    // Show the deco description (user-supplied notes or default catalog copy)
+    const desc = (item.description && item.description.trim())
+      || getDecoDescription(item.name);
+    if (desc) {
+      const descEl = document.createElement('p');
+      descEl.textContent = desc;
+      descEl.style.cssText = `
+        font-size: 14px; line-height: 1.55; color: rgba(245,240,232,0.75);
+        margin: 8px 0 0 0; max-width: 360px; text-align: center;
+      `;
+      contentArea.appendChild(descEl);
+    }
   } else {
     // Type badge
     const badge = document.createElement('div');
@@ -312,9 +338,8 @@ export function showConfirmDialog({ heading, subtext, confirmLabel = 'Delete', o
   const backdrop = document.createElement('div');
   backdrop.style.cssText = `
     position: fixed; inset: 0; z-index: 1100;
-    background: rgba(30,16,6,0.70);
-    backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
-    opacity: 0; transition: opacity 0.2s ease;
+    background: rgba(22,10,4,0.82);
+    opacity: 0; transition: opacity 0.18s ease;
   `;
 
   const card = document.createElement('div');
@@ -500,7 +525,15 @@ function showConfirmDelete(card, contentArea, item, { onDeleted }) {
       confirmBtn.disabled   = true;
       confirmBtn.textContent = 'Deleting…';
       cancelBtn.disabled    = true;
-      errEl.style.display   = 'none';
+      if (item.id && item.id.startsWith('item-')) {
+        if (activeItem) {
+          activeItem.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+          activeItem.style.opacity    = '0';
+          activeItem.style.transform  = 'scale(0.85)';
+        }
+        _closeAfterDelete();
+        return;
+      }
 
       const { error } = await supabase
         .from('items')

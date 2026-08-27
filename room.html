@@ -18,7 +18,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -59,6 +58,8 @@
   </div>
   <!-- ─── Shelf Area ───────────────────────────────────────────────────────── -->
   <div id="shelf-area">
+    <!-- Focused lighting pool on shelf only -->
+    <div class="shelf-spotlight"></div>
     <!-- Items float here, flush on top of plank (Bug #1 prevention) -->
     <div id="items-layer-wrap">
       <div id="items-layer-inner">
@@ -120,21 +121,71 @@
           <input type="text" id="item-name" placeholder="e.g. Dune" autocomplete="off" required>
         </div>
         <div class="form-field" id="field-deco-presets" style="display:none; text-align:center;">
-          <label style="margin-bottom: 12px; display:block;">Select an object</label>
-          <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-            <label class="deco-option">
-              <input type="radio" name="deco-preset" value="Plant" checked style="display:none;">
-              <div class="deco-card">🪴<br>Plant</div>
+          <!-- Top-level Category Selector (PLANT / PHOTO / DUCK) -->
+          <label style="margin-bottom: 10px; display:block; font-size: 13px; color: rgba(245,240,232,0.85); font-weight: 500;">Select Category</label>
+          <div class="deco-category-selector" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 16px;">
+            <label class="deco-cat-option" style="flex: 1;">
+              <input type="radio" name="deco-category" value="plant" checked style="display:none;">
+              <div class="deco-card" id="deco-cat-card-plant">🪴<br><strong>Plant</strong></div>
             </label>
-            <label class="deco-option">
-              <input type="radio" name="deco-preset" value="Framed Photo" style="display:none;">
-              <div class="deco-card">🖼️<br>Photo</div>
+            <label class="deco-cat-option" style="flex: 1;">
+              <input type="radio" name="deco-category" value="photo" style="display:none;">
+              <div class="deco-card" id="deco-cat-card-photo">🖼️<br><strong>Photo</strong></div>
             </label>
-            <label class="deco-option">
-              <input type="radio" name="deco-preset" value="Duck" style="display:none;">
-              <div class="deco-card">🦆<br>Duck</div>
+            <label class="deco-cat-option" style="flex: 1;">
+              <input type="radio" name="deco-category" value="duck" style="display:none;">
+              <div class="deco-card" id="deco-cat-card-duck">🦆<br><strong>Duck</strong></div>
             </label>
           </div>
+
+          <!-- Second-level: Plant Variants -->
+          <div id="deco-sub-plant" class="deco-sub-picker" style="margin-bottom: 14px;">
+            <label style="margin-bottom: 8px; display:block; font-size: 12px; color: rgba(245,240,232,0.7); font-weight: 500;">Choose Plant Style</label>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+              <label class="deco-option">
+                <input type="radio" name="deco-preset" value="Plant" checked style="display:none;">
+                <div class="deco-card">🪴<br><strong>Monstera</strong></div>
+              </label>
+              <label class="deco-option">
+                <input type="radio" name="deco-preset" value="Cactus" style="display:none;">
+                <div class="deco-card">🌵<br><strong>Cactus</strong></div>
+              </label>
+              <label class="deco-option">
+                <input type="radio" name="deco-preset" value="Bonsai" style="display:none;">
+                <div class="deco-card">🌳<br><strong>Bonsai</strong></div>
+              </label>
+              <label class="deco-option">
+                <input type="radio" name="deco-preset" value="Vine Plant" style="display:none;">
+                <div class="deco-card">🌿<br><strong>Ivy Vine</strong></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Second-level: Duck Variants -->
+          <div id="deco-sub-duck" class="deco-sub-picker" style="display: none; margin-bottom: 14px;">
+            <label style="margin-bottom: 8px; display:block; font-size: 12px; color: rgba(245,240,232,0.7); font-weight: 500;">Choose Duck Style</label>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+              <label class="deco-option">
+                <input type="radio" name="deco-preset" value="Duck" style="display:none;">
+                <div class="deco-card">🦆<br><strong>Yellow Duck</strong></div>
+              </label>
+              <label class="deco-option">
+                <input type="radio" name="deco-preset" value="Mallard Duck" style="display:none;">
+                <div class="deco-card">🌾<br><strong>Mallard Duck</strong></div>
+              </label>
+              <label class="deco-option">
+                <input type="radio" name="deco-preset" value="Detective Duck" style="display:none;">
+                <div class="deco-card">🕵️<br><strong>Detective Duck</strong></div>
+              </label>
+              <label class="deco-option">
+                <input type="radio" name="deco-preset" value="White Duck" style="display:none;">
+                <div class="deco-card">🪿<br><strong>White Duck</strong></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Hidden radio for Photo -->
+          <input type="radio" name="deco-preset" id="deco-preset-photo" value="Framed Photo" style="display:none;">
         </div>
         <div class="form-field" id="field-cover">
           <label for="item-cover">Cover image (optional)</label>

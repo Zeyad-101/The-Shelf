@@ -3,6 +3,7 @@
  * Add Item modal — 2-step flow: type selector → form → insert + Storage upload
  */
 import { supabase } from './supabaseClient.js';
+import { getDecoDescription } from './shelfRender.js';
 
 let currentShelfId = null;
 let onItemAdded = null; // callback after successful insert
@@ -66,6 +67,12 @@ function openModal() {
   document.getElementById('form-error').textContent = '';
   const ratingErr = document.getElementById('rating-error');
   if (ratingErr) ratingErr.style.display = 'none';
+
+  // Reset deco category to plant default
+  const plantCat = document.querySelector('input[name="deco-category"][value="plant"]');
+  if (plantCat) plantCat.checked = true;
+  const plantPreset = document.querySelector('input[name="deco-preset"][value="Plant"]');
+  if (plantPreset) plantPreset.checked = true;
 }
 
 function closeModal() {
@@ -104,29 +111,79 @@ function selectType(type) {
   const decoPresets = document.getElementById('field-deco-presets');
   if (decoPresets) decoPresets.style.display = isDeco ? 'block' : 'none';
 
-  function updateDecoCoverField() {
-    const isFramedPhoto = document.querySelector('input[name="deco-preset"]:checked')?.value === 'Framed Photo';
-    if (isDeco && isFramedPhoto) {
-      document.getElementById('field-cover').style.display = 'block';
-      document.getElementById('item-cover').required = false; // still optional in HTML, but we'll enforce in JS
-    } else if (isDeco) {
-      document.getElementById('field-cover').style.display = 'none';
-      document.getElementById('item-cover').required = false;
-    } else {
+  function syncDecoUI() {
+    if (!isDeco) {
       document.getElementById('field-cover').style.display = 'block';
       document.getElementById('item-cover').required = false;
+      return;
+    }
+
+    const cat = document.querySelector('input[name="deco-category"]:checked')?.value || 'plant';
+    const plantSub = document.getElementById('deco-sub-plant');
+    const duckSub = document.getElementById('deco-sub-duck');
+    const coverField = document.getElementById('field-cover');
+    const photoRadio = document.getElementById('deco-preset-photo');
+
+    if (cat === 'plant') {
+      if (plantSub) plantSub.style.display = 'block';
+      if (duckSub) duckSub.style.display = 'none';
+      if (coverField) coverField.style.display = 'none';
+      // Ensure one plant radio is selected
+      const checkedPlant = document.querySelector('#deco-sub-plant input[name="deco-preset"]:checked');
+      if (!checkedPlant) {
+        const firstPlant = document.querySelector('#deco-sub-plant input[name="deco-preset"]');
+        if (firstPlant) firstPlant.checked = true;
+      }
+    } else if (cat === 'duck') {
+      if (plantSub) plantSub.style.display = 'none';
+      if (duckSub) duckSub.style.display = 'block';
+      if (coverField) coverField.style.display = 'none';
+      // Ensure one duck radio is selected
+      const checkedDuck = document.querySelector('#deco-sub-duck input[name="deco-preset"]:checked');
+      if (!checkedDuck) {
+        const firstDuck = document.querySelector('#deco-sub-duck input[name="deco-preset"]');
+        if (firstDuck) firstDuck.checked = true;
+      }
+    } else if (cat === 'photo') {
+      if (plantSub) plantSub.style.display = 'none';
+      if (duckSub) duckSub.style.display = 'none';
+      if (coverField) coverField.style.display = 'block';
+      if (photoRadio) photoRadio.checked = true;
+    }
+
+    // Update description for the currently checked preset
+    const currentPreset = document.querySelector('input[name="deco-preset"]:checked');
+    const descField = document.getElementById('item-description');
+    if (descField && currentPreset) {
+      const defaultDesc = getDecoDescription(currentPreset.value);
+      descField.value = defaultDesc;
+      descField.placeholder = defaultDesc
+        ? 'Edit description or leave as-is'
+        : 'What made it special?';
     }
   }
 
-  // Attach change listener to radio buttons once
-  if (isDeco && !window._decoRadioListenerAdded) {
-    document.querySelectorAll('input[name="deco-preset"]').forEach(r => {
-      r.addEventListener('change', updateDecoCoverField);
+  // Attach change listeners once
+  if (isDeco && !window._decoListenersAdded) {
+    document.querySelectorAll('input[name="deco-category"]').forEach(r => {
+      r.addEventListener('change', syncDecoUI);
     });
-    window._decoRadioListenerAdded = true;
+    document.querySelectorAll('input[name="deco-preset"]').forEach(r => {
+      r.addEventListener('change', () => {
+        const descField = document.getElementById('item-description');
+        if (descField) {
+          const defaultDesc = getDecoDescription(r.value);
+          descField.value = defaultDesc;
+          descField.placeholder = defaultDesc
+            ? 'Edit description or leave as-is'
+            : 'What made it special?';
+        }
+      });
+    });
+    window._decoListenersAdded = true;
   }
 
-  updateDecoCoverField();
+  syncDecoUI();
   showStep(2);
 }
 
@@ -202,6 +259,24 @@ async function handleSubmit(e) {
   submitBtn.textContent = 'Adding…';
 
   try {
+    if (window.location.search.includes('demo=1') || localStorage.getItem('shelf_dev_mode') === 'true') {
+      const inserted = {
+        id: 'item-' + Date.now(),
+        shelf_id: currentShelfId,
+        type,
+        name,
+        cover_url: null,
+        rating: ratingRaw ? parseFloat(ratingRaw) : null,
+        description: description || (isDeco ? getDecoDescription(name) : null),
+        position_x: 60 + Math.random() * 300,
+        rotation: (Math.random() * 6 - 3),
+        sort_order: Math.floor(Date.now() / 1000),
+      };
+      closeModal();
+      if (onItemAdded) onItemAdded(inserted);
+      return;
+    }
+
     // Get current user for Storage path
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');

@@ -8,6 +8,7 @@ import { buildItemEl } from './shelfRender.js';
 import { attachDrag } from './dragReposition.js';
 import { openInspect, showConfirmDialog } from './inspectAnimation.js';
 import { initAddItemModal, updateShelfId } from './addItem.js';
+import { playDuckQuack, triggerDuckWobble, isDuckItem } from './audio.js';
 
 let session      = null;
 let shelves      = [];
@@ -49,6 +50,13 @@ async function init() {
 
 // ─── Shelves ───────────────────────────────────────────────────────────────────
 async function loadShelves() {
+  if (session.user.id === 'demo-user-123') {
+    shelves = [{ id: 'demo-shelf', name: 'FAVORITES', is_public: true, sort_order: 0 }];
+    renderTabs();
+    await activateShelf(shelves[0]);
+    return;
+  }
+
   const { data, error } = await supabase
     .from('shelves')
     .select('id, user_id, name, is_public, share_slug, sort_order')
@@ -328,6 +336,25 @@ async function loadItems(shelfId) {
     layer.style.opacity    = '0';
   }
 
+  if (session.user.id === 'demo-user-123') {
+    currentItems = [
+      { id: 'item-plant-1', shelf_id: shelfId, type: 'decorative', name: 'Plant', position_x: 40, rotation: 0, sort_order: 1 },
+      { id: 'item-plant-2', shelf_id: shelfId, type: 'decorative', name: 'Cactus', position_x: 160, rotation: 1, sort_order: 2 },
+      { id: 'item-plant-3', shelf_id: shelfId, type: 'decorative', name: 'Bonsai', position_x: 280, rotation: -1, sort_order: 3 },
+      { id: 'item-plant-4', shelf_id: shelfId, type: 'decorative', name: 'Vine Plant', position_x: 420, rotation: 0, sort_order: 4 },
+      { id: 'item-duck-1', shelf_id: shelfId, type: 'decorative', name: 'Duck', position_x: 550, rotation: -2, sort_order: 5 },
+      { id: 'item-duck-2', shelf_id: shelfId, type: 'decorative', name: 'Mallard Duck', position_x: 690, rotation: 2, sort_order: 6 },
+      { id: 'item-duck-3', shelf_id: shelfId, type: 'decorative', name: 'Detective Duck', position_x: 830, rotation: -1, sort_order: 7 },
+      { id: 'item-duck-4', shelf_id: shelfId, type: 'decorative', name: 'White Duck', position_x: 970, rotation: 1, sort_order: 8 }
+    ];
+    renderItems();
+    if (layer) {
+      layer.style.transition = 'opacity 0.18s ease';
+      layer.style.opacity    = '1';
+    }
+    return;
+  }
+
   const { data, error } = await supabase
     .from('items')
     .select('id, shelf_id, type, name, cover_url, rating, description, position_x, rotation, sort_order')
@@ -348,6 +375,50 @@ async function loadItems(shelfId) {
   }));
 }
 
+function inspectItem(item, el) {
+  openInspect(item, el, {
+    showDelete: true,
+    onDeleted: (deletedId) => onItemDeleted(deletedId),
+  });
+}
+
+/**
+ * Wire up click behaviour for one shelf item.
+ * Ducks quack + wobble on a single press and open the inspect card on
+ * double-click (desktop) or long-press (touch); everything else opens
+ * inspect on a single click.
+ */
+function wireItemInteractions(el, item) {
+  if (!isDuckItem(item)) {
+    el.addEventListener('click', () => {
+      if (el.dataset.dragging === 'true') return;
+      inspectItem(item, el);
+    });
+    return;
+  }
+
+  el.setAttribute('title', 'Press to quack! 🦆 (Double-click to view/delete)');
+  el.addEventListener('click', () => {
+    if (el.dataset.dragging === 'true') return;
+    playDuckQuack();
+    triggerDuckWobble(el);
+  });
+  el.addEventListener('dblclick', (e) => {
+    e.stopPropagation();
+    inspectItem(item, el);
+  });
+
+  let pressTimer = null;
+  el.addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'touch') return;
+    pressTimer = setTimeout(() => {
+      if (el.dataset.dragging !== 'true') inspectItem(item, el);
+    }, 600);
+  });
+  el.addEventListener('pointerup',     () => clearTimeout(pressTimer));
+  el.addEventListener('pointercancel', () => clearTimeout(pressTimer));
+}
+
 function renderItems() {
   const container = document.getElementById('items-layer-inner');
   if (!container) return;
@@ -360,15 +431,7 @@ function renderItems() {
   sorted.forEach((item) => {
     const el = buildItemEl(item, true);
     attachDrag(el, item, container);
-
-    el.addEventListener('click', () => {
-      if (el.dataset.dragging === 'true') return;
-      openInspect(item, el, {
-        showDelete: true,
-        onDeleted: (deletedId) => onItemDeleted(deletedId),
-      });
-    });
-
+    wireItemInteractions(el, item);
     container.appendChild(el);
   });
 }
@@ -388,20 +451,14 @@ function onItemAdded(newItem) {
 
   const el = buildItemEl(newItem, true);
   attachDrag(el, newItem, container);
-  el.addEventListener('click', () => {
-    if (el.dataset.dragging === 'true') return;
-    openInspect(newItem, el, {
-      showDelete: true,
-      onDeleted: (deletedId) => onItemDeleted(deletedId),
-    });
-  });
+  wireItemInteractions(el, newItem);
   container.appendChild(el);
 
   // Part 2 — settle/bounce animation using Web Animations API
   // Uses the item's actual rotation value so the bounce axis is correct
   const rot  = newItem.rotation || 0;
   const rotS = `${rot}deg`;
-  el.animate([
+  const dropAnim = el.animate([
     { transform: `rotate(${rotS}) translateY(-22px)`, opacity: '0', offset: 0    },
     { transform: `rotate(${rotS}) translateY(5px)`,   opacity: '1', offset: 0.55 },
     { transform: `rotate(${rotS}) translateY(-4px)`,  opacity: '1', offset: 0.75 },
@@ -412,6 +469,10 @@ function onItemAdded(newItem) {
     easing:   'cubic-bezier(0.22, 1, 0.36, 1)',
     fill:     'forwards',
   });
+  // A forwards-filling WAAPI animation outranks CSS animations forever, which
+  // would swallow the duck's quack wobble on a freshly added duck. Its end state
+  // already matches the element's inline transform, so drop it once it lands.
+  dropAnim.finished.then(() => dropAnim.cancel()).catch(() => {});
 }
 
 // ─── Add shelf ─────────────────────────────────────────────────────────────────

@@ -6,6 +6,7 @@
  */
 import { supabase } from './supabaseClient.js';
 import { buildItemEl } from './shelfRender.js';
+import { playDuckQuack, triggerDuckWobble, isDuckItem } from './audio.js';
 
 async function init() {
   // Read slug from URL path (e.g. /s/abc123 -> 'abc123')
@@ -55,6 +56,15 @@ async function init() {
     sorted.forEach((item) => {
       // interactive=false: no drag handlers, cursor:default
       const el = buildItemEl(item, false);
+      if (isDuckItem(item)) {
+        el.style.cursor = 'pointer';
+        el.style.pointerEvents = 'auto';
+        el.setAttribute('title', 'Press me! 🦆');
+        el.addEventListener('click', () => {
+          playDuckQuack();
+          triggerDuckWobble(el);
+        });
+      }
       container.appendChild(el);
     });
   }

@@ -11,20 +11,28 @@ export function attachDrag(el, item, shelfContainer) {
   let startX    = 0;
   let startLeft = 0;
   let isDragging = false;
+  // Cached at drag start so pointermove never reads layout (getBoundingClientRect
+  // / offsetWidth) in the same frame it writes el.style.left — that read-write
+  // interleave forces a synchronous reflow on every single move event.
+  let scale = 1, maxLeft = 0;
 
   const rot = item.rotation || 0; // base rotation, used to restore on drop
   const isDeco = item.type === 'decorative';
 
   el.addEventListener('pointerdown', (e) => {
     if (e.button !== 0 && e.pointerType === 'mouse') return;
-    e.preventDefault();
-    e.stopPropagation();
 
     el.setPointerCapture(e.pointerId);
     startX     = e.clientX;
     startLeft  = parseFloat(el.style.left) || 0;
     isDragging = false;
     el.dataset.dragging = 'false';
+
+    // One layout read per gesture, before any style writes.
+    const rect  = shelfContainer.getBoundingClientRect();
+    const contW = shelfContainer.offsetWidth;
+    scale   = (rect.width / contW) || 1;
+    maxLeft = Math.max(0, contW - el.offsetWidth);
 
     dragState = { el, item, startX, startLeft };
   });
@@ -54,15 +62,9 @@ export function attachDrag(el, item, shelfContainer) {
     }
     if (!isDragging) return;
 
-    // Convert screen pixel movement (dx) into logical container coordinates using bounding scale
-    const rect       = shelfContainer.getBoundingClientRect();
-    const scale      = (rect.width / shelfContainer.offsetWidth) || 1;
-    const scaledDx   = dx / scale;
-
-    const containerW = shelfContainer.offsetWidth;
-    const itemW      = el.offsetWidth;
-    const newLeft    = Math.max(0, Math.min(containerW - itemW, startLeft + scaledDx));
-    el.style.left    = newLeft + 'px';
+    // Pure write — geometry was measured once at pointerdown.
+    const newLeft = Math.max(0, Math.min(maxLeft, startLeft + dx / scale));
+    el.style.left = newLeft + 'px';
   });
 
   el.addEventListener('pointerup', (e) => {
