@@ -112,9 +112,13 @@ function selectType(type) {
   if (decoPresets) decoPresets.style.display = isDeco ? 'block' : 'none';
 
   function syncDecoUI() {
+    const coverLabel = document.getElementById('cover-label');
+    const coverInput = document.getElementById('item-cover');
+
     if (!isDeco) {
+      if (coverLabel) coverLabel.innerHTML = 'Cover image (optional)';
       document.getElementById('field-cover').style.display = 'block';
-      document.getElementById('item-cover').required = false;
+      if (coverInput) coverInput.required = false;
       return;
     }
 
@@ -128,6 +132,7 @@ function selectType(type) {
       if (plantSub) plantSub.style.display = 'block';
       if (duckSub) duckSub.style.display = 'none';
       if (coverField) coverField.style.display = 'none';
+      if (coverInput) coverInput.required = false;
       // Ensure one plant radio is selected
       const checkedPlant = document.querySelector('#deco-sub-plant input[name="deco-preset"]:checked');
       if (!checkedPlant) {
@@ -138,6 +143,7 @@ function selectType(type) {
       if (plantSub) plantSub.style.display = 'none';
       if (duckSub) duckSub.style.display = 'block';
       if (coverField) coverField.style.display = 'none';
+      if (coverInput) coverInput.required = false;
       // Ensure one duck radio is selected
       const checkedDuck = document.querySelector('#deco-sub-duck input[name="deco-preset"]:checked');
       if (!checkedDuck) {
@@ -147,7 +153,9 @@ function selectType(type) {
     } else if (cat === 'photo') {
       if (plantSub) plantSub.style.display = 'none';
       if (duckSub) duckSub.style.display = 'none';
+      if (coverLabel) coverLabel.innerHTML = 'Photo <span style="color:#E07070">*</span>';
       if (coverField) coverField.style.display = 'block';
+      if (coverInput) coverInput.required = true;
       if (photoRadio) photoRadio.checked = true;
     }
 
