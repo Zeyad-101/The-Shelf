@@ -61,32 +61,56 @@ export const SVG_BONSAI = `<svg width="110" height="105" viewBox="0 0 110 105" s
   <ellipse cx="24" cy="27" rx="8" ry="4" fill="#4D7051"/>
 </svg>`;
 
-export const SVG_VINE = `<svg width="85" height="135" viewBox="0 0 85 135" style="overflow:visible;" xmlns="http://www.w3.org/2000/svg">
-  <!-- Minimalist cream ceramic pot -->
-  <polygon points="25,35 60,35 55,70 30,70" fill="#E8E1D5"/>
-  <rect x="23" y="30" width="39" height="7" rx="2" fill="#F4EFE6"/>
-  <!-- Soil -->
-  <ellipse cx="42.5" cy="33" rx="16" ry="3.5" fill="#4A3425"/>
-  <!-- Trailing ivy vines -->
-  <path d="M34,34 Q20,55 24,78 T18,108 T22,130" fill="none" stroke="#526E46" stroke-width="2" stroke-linecap="round"/>
-  <path d="M42,34 Q48,60 42,88 T46,122" fill="none" stroke="#607F52" stroke-width="1.8" stroke-linecap="round"/>
-  <path d="M52,34 Q66,58 58,82 T65,115" fill="none" stroke="#48613D" stroke-width="1.8" stroke-linecap="round"/>
-  <!-- Leaves on vines -->
-  <circle cx="21" cy="52" r="6" fill="#6A8C5B"/>
-  <circle cx="28" cy="65" r="5.5" fill="#58764B"/>
-  <circle cx="17" cy="80" r="6.5" fill="#759A65"/>
-  <circle cx="23" cy="96" r="6" fill="#58764B"/>
-  <circle cx="16" cy="112" r="5" fill="#6A8C5B"/>
-  <circle cx="21" cy="126" r="4" fill="#7CAB6C"/>
-  <circle cx="46" cy="54" r="6" fill="#759A65"/>
-  <circle cx="39" cy="72" r="5.5" fill="#58764B"/>
-  <circle cx="45" cy="94" r="6" fill="#6A8C5B"/>
-  <circle cx="43" cy="115" r="4.5" fill="#7CAB6C"/>
-  <circle cx="62" cy="50" r="5.5" fill="#58764B"/>
-  <circle cx="56" cy="68" r="6.5" fill="#6A8C5B"/>
-  <circle cx="63" cy="88" r="5" fill="#759A65"/>
-  <circle cx="61" cy="108" r="4.5" fill="#58764B"/>
+export const SVG_SAKURA = `<svg width="110" height="105" viewBox="0 0 110 105" style="overflow:visible;" xmlns="http://www.w3.org/2000/svg">
+  <!-- Ceramic Planter Dish -->
+  <rect x="18" y="80" width="74" height="15" rx="3" fill="#2E3C48"/>
+  <rect x="15" y="76" width="80" height="6" rx="2" fill="#3D4F5E"/>
+  <!-- Planter feet -->
+  <rect x="24" y="95" width="8" height="4" rx="1" fill="#232E38"/>
+  <rect x="78" y="95" width="8" height="4" rx="1" fill="#232E38"/>
+  <!-- Moss mound -->
+  <ellipse cx="55" cy="76" rx="32" ry="6" fill="#4D6342"/>
+  <ellipse cx="44" cy="74" rx="13" ry="4" fill="#5F7A52"/>
+  <!-- Gnarled wood trunk -->
+  <path d="M52,75 Q46,55 58,45 T48,28 Q43,26 38,28" fill="none" stroke="#5E432E" stroke-width="8" stroke-linecap="round"/>
+  <path d="M52,75 Q46,55 58,45 T48,28 Q43,26 38,28" fill="none" stroke="#7A583E" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- Branches -->
+  <path d="M57,48 Q72,42 82,34" fill="none" stroke="#5E432E" stroke-width="4" stroke-linecap="round"/>
+  <path d="M49,38 Q35,36 24,34" fill="none" stroke="#5E432E" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M55,34 Q62,26 68,20" fill="none" stroke="#5E432E" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Sakura blossom clouds (layered pink petals) -->
+  <!-- Back / shadow clusters -->
+  <ellipse cx="23" cy="32" rx="18" ry="9" fill="#D97594"/>
+  <ellipse cx="82" cy="31" rx="21" ry="10" fill="#D97594"/>
+  <ellipse cx="42" cy="22" rx="21" ry="10" fill="#D97594"/>
+  <ellipse cx="65" cy="20" rx="17" ry="9" fill="#D97594"/>
+  <!-- Mid-tone blossom clusters -->
+  <ellipse cx="22" cy="29" rx="15" ry="8" fill="#F09BB5"/>
+  <ellipse cx="83" cy="28" rx="17" ry="8" fill="#F09BB5"/>
+  <ellipse cx="40" cy="19" rx="17" ry="8" fill="#F09BB5"/>
+  <ellipse cx="66" cy="18" rx="14" ry="7" fill="#F09BB5"/>
+  <!-- Bright highlight blossom pads -->
+  <ellipse cx="23" cy="26" rx="11" ry="5" fill="#FCC8D8"/>
+  <ellipse cx="84" cy="25" rx="12" ry="5" fill="#FCC8D8"/>
+  <ellipse cx="39" cy="16" rx="12" ry="5" fill="#FCC8D8"/>
+  <ellipse cx="67" cy="15" rx="10" ry="4" fill="#FCC8D8"/>
+  <!-- White blossom highlights & petal accents -->
+  <circle cx="15" cy="28" r="3.5" fill="#FCE8EF"/>
+  <circle cx="28" cy="24" r="3" fill="#FFFFFF"/>
+  <circle cx="33" cy="17" r="3.5" fill="#FFFFFF"/>
+  <circle cx="48" cy="15" r="3" fill="#FCE8EF"/>
+  <circle cx="62" cy="14" r="3.5" fill="#FFFFFF"/>
+  <circle cx="74" cy="16" r="3" fill="#FCE8EF"/>
+  <circle cx="78" cy="26" r="3.5" fill="#FCE8EF"/>
+  <circle cx="92" cy="27" r="3" fill="#FFFFFF"/>
+  <!-- Individual floating / falling petals -->
+  <ellipse cx="46" cy="56" rx="2.5" ry="1.4" transform="rotate(25 46 56)" fill="#F09BB5"/>
+  <ellipse cx="70" cy="62" rx="2" ry="1.2" transform="rotate(-30 70 62)" fill="#FCC8D8"/>
+  <ellipse cx="34" cy="66" rx="2.2" ry="1.3" transform="rotate(40 34 66)" fill="#F09BB5"/>
+  <ellipse cx="58" cy="73" rx="2.4" ry="1.2" transform="rotate(-15 58 73)" fill="#FCC8D8"/>
 </svg>`;
+
+export const SVG_VINE = SVG_SAKURA;
 
 // FULL DUCK WITH UNCLIPPED MOUTH (105x90 viewBox, generous right-side clearance
 // for the beak tip at x=92, plus overflow="visible" as a redundant safety net so
@@ -223,8 +247,9 @@ export const DECO_SIZES = {
   'Monstera':        { w: 80,  h: 130 },
   'Cactus':          { w: 75,  h: 120 },
   'Bonsai':          { w: 110, h: 105 },
-  'Vine Plant':      { w: 85,  h: 135 },
-  'Ivy':             { w: 85,  h: 135 },
+  'Sakura':          { w: 110, h: 105 },
+  'Vine Plant':      { w: 110, h: 105 },
+  'Ivy':             { w: 110, h: 105 },
   'Duck':            { w: 105, h: 90  },
   'Classic Duck':    { w: 105, h: 90  },
   'Yellow Duck':     { w: 105, h: 90  },
@@ -245,8 +270,9 @@ export const DECO_DESCRIPTIONS = {
   'Monstera':       'Classic lush potted houseplant in a terracotta pot',
   'Cactus':         'Saguaro desert cactus with spines and a blooming coral flower',
   'Bonsai':         'Japanese miniature pine bonsai with a gnarled wood trunk in a ceramic planter',
-  'Vine Plant':     'Cascading English ivy tendrils trailing over a minimalist cream pot',
-  'Ivy':            'Cascading English ivy tendrils trailing over a minimalist cream pot',
+  'Sakura':         'Japanese cherry blossom bonsai in full spring bloom with delicate pink petals',
+  'Vine Plant':     'Japanese cherry blossom bonsai in full spring bloom with delicate pink petals',
+  'Ivy':            'Japanese cherry blossom bonsai in full spring bloom with delicate pink petals',
   'Duck':           'The classic golden rubber duck',
   'Classic Duck':   'The classic golden rubber duck',
   'Yellow Duck':    'The classic golden rubber duck',
@@ -269,8 +295,8 @@ export function getDecoDescription(name) {
   if (lower.includes('bonsai')) {
     return DECO_DESCRIPTIONS['Bonsai'];
   }
-  if (lower.includes('vine') || lower.includes('ivy')) {
-    return DECO_DESCRIPTIONS['Vine Plant'];
+  if (lower.includes('sakura') || lower.includes('cherry') || lower.includes('vine') || lower.includes('ivy')) {
+    return DECO_DESCRIPTIONS['Sakura'];
   }
   if (lower.includes('mallard')) {
     return DECO_DESCRIPTIONS['Mallard Duck'];
@@ -295,8 +321,9 @@ export function getDecoSize(item) {
   if (lower.includes('detective')) return { w: 108, h: 95 };
   if (lower.includes('duck')) return { w: 105, h: 90 };
   if (lower.includes('cactus')) return { w: 75, h: 120 };
+  if (lower.includes('sakura') || lower.includes('cherry')) return { w: 110, h: 105 };
   if (lower.includes('bonsai')) return { w: 110, h: 105 };
-  if (lower.includes('vine') || lower.includes('ivy')) return { w: 85, h: 135 };
+  if (lower.includes('vine') || lower.includes('ivy')) return { w: 110, h: 105 };
   if (lower.includes('plant')) return { w: 80, h: 130 };
   return { w: 100, h: 120 };
 }
@@ -307,7 +334,7 @@ export function getDecoSvg(item) {
   if (name === 'Plant' || name === 'Potted Plant' || name === 'Monstera') return SVG_PLANT;
   if (name === 'Cactus') return SVG_CACTUS;
   if (name === 'Bonsai') return SVG_BONSAI;
-  if (name === 'Vine Plant' || name === 'Ivy') return SVG_VINE;
+  if (name === 'Sakura' || name === 'Cherry Blossom' || name === 'Vine Plant' || name === 'Ivy') return SVG_SAKURA;
   if (name === 'Duck' || name === 'Classic Duck' || name === 'Yellow Duck') return SVG_DUCK;
   if (name === 'Mallard Duck') return SVG_MALLARD;
   if (name === 'Detective Duck') return SVG_DETECTIVE_DUCK;
@@ -320,8 +347,9 @@ export function getDecoSvg(item) {
   if (lower.includes('white duck')) return SVG_WHITE_DUCK;
   if (lower.includes('duck')) return SVG_DUCK;
   if (lower.includes('cactus')) return SVG_CACTUS;
+  if (lower.includes('sakura') || lower.includes('cherry')) return SVG_SAKURA;
   if (lower.includes('bonsai')) return SVG_BONSAI;
-  if (lower.includes('vine') || lower.includes('ivy')) return SVG_VINE;
+  if (lower.includes('vine') || lower.includes('ivy')) return SVG_SAKURA;
   if (lower.includes('plant')) return SVG_PLANT;
   return getPhotoSvg(item.cover_url);
 }

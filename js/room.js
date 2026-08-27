@@ -341,7 +341,7 @@ async function loadItems(shelfId) {
       { id: 'item-plant-1', shelf_id: shelfId, type: 'decorative', name: 'Plant', position_x: 40, rotation: 0, sort_order: 1 },
       { id: 'item-plant-2', shelf_id: shelfId, type: 'decorative', name: 'Cactus', position_x: 160, rotation: 1, sort_order: 2 },
       { id: 'item-plant-3', shelf_id: shelfId, type: 'decorative', name: 'Bonsai', position_x: 280, rotation: -1, sort_order: 3 },
-      { id: 'item-plant-4', shelf_id: shelfId, type: 'decorative', name: 'Vine Plant', position_x: 420, rotation: 0, sort_order: 4 },
+      { id: 'item-plant-4', shelf_id: shelfId, type: 'decorative', name: 'Sakura', position_x: 420, rotation: 0, sort_order: 4 },
       { id: 'item-duck-1', shelf_id: shelfId, type: 'decorative', name: 'Duck', position_x: 550, rotation: -2, sort_order: 5 },
       { id: 'item-duck-2', shelf_id: shelfId, type: 'decorative', name: 'Mallard Duck', position_x: 690, rotation: 2, sort_order: 6 },
       { id: 'item-duck-3', shelf_id: shelfId, type: 'decorative', name: 'Detective Duck', position_x: 830, rotation: -1, sort_order: 7 },
